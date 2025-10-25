@@ -1,4 +1,4 @@
-package com.biblioteca_icpi.exception;
+package com.biblioteca_icpi.exception.usuario;
 
 public class UsuarioNaoEncontradoException extends RuntimeException {
 
