@@ -4,6 +4,8 @@ import com.biblioteca_icpi.model.Usuario;
 import com.biblioteca_icpi.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UsuarioService {
 
@@ -13,10 +15,34 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public Usuario criarUsuario (Usuario usuario) {
-        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
-            throw new UserNotFoundException("Usuário não encontrado.");
-        }
-        return usuarioRepository.save(usuario);
+    Usuario buscarUsuarioNoBanco (Usuario usuario) {
+        return usuarioRepository.findByEmail(usuario.getEmail()).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
     }
+
+    public Usuario criarUsuario(Usuario usuario) {
+        Optional<Usuario> possivelUsuario = usuarioRepository.findByEmail(usuario.getEmail());
+        if (possivelUsuario.isPresent()) {
+            throw new UsuarioJaExistente("Usuário já cadastrado!");
+        } else {
+            return usuarioRepository.save(usuario);
+        }
+    }
+
+    public Usuario editarUsuario(Usuario usuario) {
+        Usuario usuarioEncontrado = buscarUsuarioNoBanco(usuario);
+        usuarioEncontrado.setNome(usuario.getNome());
+        usuarioEncontrado.setSenha(usuario.getSenha());
+        return usuarioRepository.save(usuarioEncontrado);
+    }
+
+    public void excluirUsuario(Long id) {
+        Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario não encontrado!"));
+            usuarioRepository.delete(usuarioEncontrado);
+    }
+
+    public Usuario lerUsuario(Long id) {
+       return usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario não encontrado!"));
+
+    }
+
 }
