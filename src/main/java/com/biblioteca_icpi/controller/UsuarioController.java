@@ -20,9 +20,9 @@ public class UsuarioController {
         return usuarioService.criarUsuario(usuario);
     }
 
-    @PutMapping
-    public Usuario editarUsuario (@Valid @RequestBody Usuario usuario) {
-        return usuarioService.editarUsuario(usuario);
+    @PutMapping("/{id}")
+    public Usuario editarUsuario (@Valid @PathVariable Long id, @RequestBody Usuario usuario) {
+        return usuarioService.editarUsuario(id, usuario);
     }
 
     @DeleteMapping("/{id}")
