@@ -34,4 +34,44 @@ public class Livro {
 
     @OneToMany(mappedBy = "livro")
     private List<Aluguel> alugueis;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public @NotBlank String getNome() {
+        return nome;
+    }
+
+    public void setNome(@NotBlank String nome) {
+        this.nome = nome;
+    }
+
+    public @NotBlank String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(@NotBlank String autor) {
+        this.autor = autor;
+    }
+
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
+    }
+
+    public List<Aluguel> getAlugueis() {
+        return alugueis;
+    }
+
+    public void setAlugueis(List<Aluguel> alugueis) {
+        this.alugueis = alugueis;
+    }
 }
