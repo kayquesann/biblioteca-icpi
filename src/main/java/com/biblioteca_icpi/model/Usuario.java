@@ -1,6 +1,8 @@
 package com.biblioteca_icpi.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
@@ -8,15 +10,30 @@ import java.util.List;
 @Table(name = "TB_USUARIO")
 public class Usuario {
 
+    public Usuario() {
+    }
+
+    public Usuario(Long id, String nome, String email, String senha, List<Aluguel> alugueis) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.alugueis = alugueis;
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String nome;
 
+    @NotBlank
+    @Email
     @Column(unique = true)
     private String email;
 
+    @NotBlank
     private String senha;
 
     @OneToMany(mappedBy = "usuario")

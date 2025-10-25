@@ -8,6 +8,17 @@ import java.time.LocalDate;
 @Table(name = "TB_ALUGUEL")
 public class Aluguel {
 
+    public Aluguel() {
+    }
+
+    public Aluguel(Long id, Usuario usuario, Livro livro, LocalDate dataInicio, LocalDate dataDevolucao) {
+        this.id = id;
+        this.usuario = usuario;
+        this.livro = livro;
+        this.dataInicio = dataInicio;
+        this.dataDevolucao = dataDevolucao;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
