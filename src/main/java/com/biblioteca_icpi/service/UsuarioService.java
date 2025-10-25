@@ -1,5 +1,7 @@
 package com.biblioteca_icpi.service;
 
+import com.biblioteca_icpi.exception.UsuarioJaExistenteException;
+import com.biblioteca_icpi.exception.UsuarioNaoEncontradoException;
 import com.biblioteca_icpi.model.Usuario;
 import com.biblioteca_icpi.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class UsuarioService {
     public Usuario criarUsuario(Usuario usuario) {
         Optional<Usuario> possivelUsuario = usuarioRepository.findByEmail(usuario.getEmail());
         if (possivelUsuario.isPresent()) {
-            throw new UsuarioJaExistente("Usuário já cadastrado!");
+            throw new UsuarioJaExistenteException("Usuário já cadastrado!");
         } else {
             return usuarioRepository.save(usuario);
         }
