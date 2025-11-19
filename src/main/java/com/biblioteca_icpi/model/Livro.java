@@ -30,6 +30,10 @@ public class Livro {
     @NotBlank
     private String autor;
 
+    private String descricao;
+
+    private String genero;
+
     private boolean disponivel = true;
 
     @OneToMany(mappedBy = "livro")
@@ -57,6 +61,22 @@ public class Livro {
 
     public void setAutor(@NotBlank String autor) {
         this.autor = autor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 
     public boolean isDisponivel() {
