@@ -42,9 +42,4 @@ public class UsuarioService {
         usuarioRepository.delete(usuarioEncontrado);
     }
 
-    public Usuario lerUsuario(Long id) {
-       return buscarUsuarioNoBanco(id);
-
-    }
-
 }
