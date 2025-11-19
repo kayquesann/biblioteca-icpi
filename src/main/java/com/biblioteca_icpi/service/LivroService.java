@@ -50,4 +50,24 @@ public class LivroService {
     public Livro buscarLivroEspecifico (Long id) {
         return buscarLivroNoBancoDeDados(id);
     }
+
+    public void marcarComoAlugado (Livro livro) {
+        if (livro.isDisponivel()) {
+            livro.setDisponivel(false);
+            livroRepository.save(livro);
+        }
+        else {
+            throw new IllegalStateException("Este livro já está alugado!");
+        }
+    }
+
+    public void marcarcomoDisponivel (Livro livro) {
+        if (livro.isDisponivel()) {
+            throw  new IllegalStateException("Este livro já está disponível!");
+        }
+        else {
+            livro.setDisponivel(true);
+            livroRepository.save(livro);
+        }
+    }
 }
