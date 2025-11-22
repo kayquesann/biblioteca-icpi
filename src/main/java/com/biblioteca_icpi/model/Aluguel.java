@@ -31,6 +31,8 @@ public class Aluguel {
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
+    private String status = "ATIVO";
+
     private LocalDate dataInicio;
 
     private LocalDate dataDevolucao;
@@ -57,6 +59,14 @@ public class Aluguel {
 
     public void setLivro(Livro livro) {
         this.livro = livro;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDate getDataInicio() {
