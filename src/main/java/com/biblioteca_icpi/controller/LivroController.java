@@ -4,6 +4,7 @@ import com.biblioteca_icpi.dto.CadastrarLivroDTO;
 import com.biblioteca_icpi.dto.EditarLivroDTO;
 import com.biblioteca_icpi.model.Livro;
 import com.biblioteca_icpi.service.LivroService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,12 @@ public class LivroController {
     }
 
     @PostMapping
-    public Livro cadastrarLivro (@RequestBody CadastrarLivroDTO dto) {
+    public Livro cadastrarLivro ( @Valid @RequestBody CadastrarLivroDTO dto) {
         return livroService.cadastrarLivro(dto);
     }
 
     @PutMapping("/{idLivro}")
-    public Livro editarLivro (@PathVariable Long idLivro, @RequestBody EditarLivroDTO dto) {
+    public Livro editarLivro (@PathVariable Long idLivro, @Valid @RequestBody EditarLivroDTO dto) {
         return livroService.editarLivro(idLivro, dto);
     }
 

@@ -25,15 +25,11 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String nome;
 
-    @NotBlank
-    @Email
     @Column(unique = true)
     private String email;
 
-    @NotBlank
     private String senha;
 
     @OneToMany(mappedBy = "usuario")

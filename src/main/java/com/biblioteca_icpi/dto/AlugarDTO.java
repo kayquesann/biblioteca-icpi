@@ -1,8 +1,13 @@
 package com.biblioteca_icpi.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class AlugarDTO {
 
+    @NotNull(message = "O ID do livro é obrigatório.")
     private Long idLivro;
+
+    @NotNull(message = "O ID do usuário é obrigatório.")
     private Long idUsuario;
 
     public Long getIdLivro() {

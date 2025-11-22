@@ -3,6 +3,7 @@ package com.biblioteca_icpi.controller;
 import com.biblioteca_icpi.dto.AlugarDTO;
 import com.biblioteca_icpi.model.Aluguel;
 import com.biblioteca_icpi.service.AluguelService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,8 @@ public class AluguelController {
     }
 
     @PostMapping
-    public Aluguel alugarLivro (@RequestBody AlugarDTO request) {
-        return aluguelService.alugarLivro(request.getIdLivro(), request.getIdUsuario());
+    public Aluguel alugarLivro (@Valid @RequestBody AlugarDTO dto) {
+        return aluguelService.alugarLivro(dto.getIdLivro(), dto.getIdUsuario());
     }
 
     @PutMapping("/{idAluguel}")

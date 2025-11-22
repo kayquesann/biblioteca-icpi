@@ -26,7 +26,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public Usuario editarUsuario (@Valid @PathVariable Long id, @RequestBody EditarUsuarioDTO dto) {
+    public Usuario editarUsuario (@PathVariable Long id, @Valid @RequestBody EditarUsuarioDTO dto) {
         return usuarioService.editarUsuario(id, dto);
     }
 

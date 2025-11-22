@@ -1,9 +1,13 @@
 package com.biblioteca_icpi.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class EditarUsuarioDTO {
 
+    @NotBlank(message = "O nome do usuário é obrigatório.")
     private String nome;
 
+    @NotBlank(message = "A senha é obrigatória.")
     private String senha;
 
     public String getNome() {

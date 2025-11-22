@@ -24,10 +24,8 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
     private String nome;
 
-    @NotBlank
     private String autor;
 
     private String descricao;
@@ -47,19 +45,19 @@ public class Livro {
         this.id = id;
     }
 
-    public @NotBlank String getNome() {
+    public String getNome() {
         return nome;
     }
 
-    public void setNome(@NotBlank String nome) {
+    public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public @NotBlank String getAutor() {
+    public String getAutor() {
         return autor;
     }
 
-    public void setAutor(@NotBlank String autor) {
+    public void setAutor(String autor) {
         this.autor = autor;
     }
 

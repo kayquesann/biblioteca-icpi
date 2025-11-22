@@ -1,13 +1,19 @@
 package com.biblioteca_icpi.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class EditarLivroDTO {
 
+    @NotBlank(message = "O nome do livro é obrigatório.")
     private String nome;
 
+    @NotBlank(message = "O autor é obrigatório.")
     private String autor;
 
+    @NotBlank(message = "A descrição é obrigatória.")
     private String descricao;
 
+    @NotBlank(message = "O gênero é obrigatório.")
     private String genero;
 
     public String getNome() {
