@@ -1,5 +1,6 @@
 package com.biblioteca_icpi.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class AlugarDTO {
@@ -7,8 +8,8 @@ public class AlugarDTO {
     @NotNull(message = "O ID do livro é obrigatório.")
     private Long idLivro;
 
-    @NotNull(message = "O ID do usuário é obrigatório.")
-    private Long idUsuario;
+    @NotBlank(message = "O email do usuário é obrigatório.")
+    private String email;
 
     public Long getIdLivro() {
         return idLivro;
@@ -18,11 +19,11 @@ public class AlugarDTO {
         this.idLivro = idLivro;
     }
 
-    public Long getIdUsuario() {
-        return idUsuario;
+    public @NotBlank(message = "O email do usuário é obrigatório.") String getEmail() {
+        return email;
     }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setEmail(@NotBlank(message = "O email do usuário é obrigatório.") String email) {
+        this.email = email;
     }
 }

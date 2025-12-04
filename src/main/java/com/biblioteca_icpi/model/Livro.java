@@ -1,8 +1,6 @@
 package com.biblioteca_icpi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-
 import java.util.List;
 
 @Entity

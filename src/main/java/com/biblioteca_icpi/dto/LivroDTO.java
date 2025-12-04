@@ -2,7 +2,7 @@ package com.biblioteca_icpi.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CadastrarLivroDTO {
+public class LivroDTO {
 
     @NotBlank(message = "O nome do livro é obrigatório.")
     private String nome;

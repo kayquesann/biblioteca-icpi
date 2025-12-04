@@ -1,16 +1,14 @@
 package com.biblioteca_icpi.controller;
 
-import com.biblioteca_icpi.dto.CadastrarLivroDTO;
-import com.biblioteca_icpi.dto.EditarLivroDTO;
-import com.biblioteca_icpi.model.Livro;
+import com.biblioteca_icpi.dto.LivroDTO;
 import com.biblioteca_icpi.service.LivroService;
 import jakarta.validation.Valid;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/livros")
 public class LivroController {
 
@@ -20,28 +18,29 @@ public class LivroController {
         this.livroService = livroService;
     }
 
-    @GetMapping("/{idLivro}")
-    public Livro buscarLivro (@PathVariable Long idLivro) {
-        return livroService.buscarLivroNoBancoDeDados(idLivro);
+    @GetMapping("/{id}")
+    public ResponseEntity<LivroDTO> buscarLivro (@PathVariable Long id) {
+        return ResponseEntity.ok(livroService.buscarLivroNoBancoDeDados(id));
     }
 
     @PostMapping
-    public Livro cadastrarLivro ( @Valid @RequestBody CadastrarLivroDTO dto) {
-        return livroService.cadastrarLivro(dto);
+    public ResponseEntity<LivroDTO> cadastrarLivro (@Valid @RequestBody LivroDTO dto) {
+        return ResponseEntity.ok(livroService.cadastrarLivro(dto));
     }
 
-    @PutMapping("/{idLivro}")
-    public Livro editarLivro (@PathVariable Long idLivro, @Valid @RequestBody EditarLivroDTO dto) {
-        return livroService.editarLivro(idLivro, dto);
+    @PutMapping("/{id}")
+    public ResponseEntity<LivroDTO> editarLivro (@PathVariable Long id, @Valid @RequestBody LivroDTO dto) {
+        return ResponseEntity.ok(livroService.editarLivro(id, dto));
     }
 
-    @DeleteMapping("/{idLivro}")
-    public void deletarLivro (@PathVariable Long idLivro) {
-        livroService.excluirLivro(idLivro);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarLivro (@PathVariable Long id) {
+        livroService.excluirLivro(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public List<Livro> listarLivros () {
-        return livroService.listarLivros();
+    public ResponseEntity<List<LivroDTO>> listarLivros () {
+        return ResponseEntity.ok(livroService.listarLivros());
     }
 }

@@ -1,24 +1,28 @@
 package com.biblioteca_icpi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "TB_USUARIO")
-public class Usuario {
+public class Usuario implements UserDetails {
 
     public Usuario() {
     }
 
-    public Usuario(Long id, String nome, String email, String senha, List<Aluguel> alugueis) {
+    public Usuario(Long id, String nome, String email, String senha, List<Aluguel> alugueis, Set<Role> role) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.alugueis = alugueis;
+        this.roles = role;
     }
 
     @Id
@@ -34,6 +38,49 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario")
     private List<Aluguel> alugueis;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "TB_USUARIO_ROLE",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     public Long getId() {
         return id;
@@ -73,5 +120,14 @@ public class Usuario {
 
     public void setAlugueis(List<Aluguel> alugueis) {
         this.alugueis = alugueis;
+    }
+
+    public Set<Role> getRoles() {
+
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

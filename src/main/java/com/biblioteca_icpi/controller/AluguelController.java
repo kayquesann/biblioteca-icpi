@@ -1,15 +1,15 @@
 package com.biblioteca_icpi.controller;
 
 import com.biblioteca_icpi.dto.AlugarDTO;
-import com.biblioteca_icpi.model.Aluguel;
+import com.biblioteca_icpi.dto.AluguelDTO;
 import com.biblioteca_icpi.service.AluguelService;
 import jakarta.validation.Valid;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/alugueis")
 public class AluguelController {
 
@@ -20,22 +20,22 @@ public class AluguelController {
     }
 
     @PostMapping
-    public Aluguel alugarLivro (@Valid @RequestBody AlugarDTO dto) {
-        return aluguelService.alugarLivro(dto.getIdLivro(), dto.getIdUsuario());
+    public ResponseEntity<AluguelDTO> alugarLivro (@Valid @RequestBody AlugarDTO dto) {
+        return ResponseEntity.ok(aluguelService.alugarLivro(dto));
     }
 
-    @PutMapping("/{idAluguel}")
-    public void devolverLivro (@PathVariable Long idAluguel) {
-        aluguelService.devolverLivro(idAluguel);
+    @PutMapping("/{id}")
+    public ResponseEntity<AluguelDTO> devolverLivro (@PathVariable Long id) {
+        return ResponseEntity.ok(aluguelService.devolverLivro(id));
     }
 
     @GetMapping("/{id}")
-    public Aluguel consultarAluguel (@PathVariable Long idAluguel) {
-        return aluguelService.consultarAluguelEspecifico(idAluguel);
+    public ResponseEntity<AluguelDTO> consultarAluguel (@PathVariable Long id) {
+        return ResponseEntity.ok(aluguelService.consultarAluguelEspecifico(id));
     }
 
     @GetMapping
-    public List<Aluguel> consultarAlugueis () {
-        return aluguelService.consultarAlugueis();
+    public ResponseEntity<List<AluguelDTO>> consultarAlugueis () {
+        return ResponseEntity.ok(aluguelService.consultarAlugueis());
     }
 }
