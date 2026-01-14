@@ -2,12 +2,11 @@ package com.biblioteca_icpi.model;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "TB_USUARIO")
@@ -16,40 +15,38 @@ public class Usuario implements UserDetails {
     public Usuario() {
     }
 
-    public Usuario(Long id, String nome, String email, String senha, List<Aluguel> alugueis, Set<Role> role) {
+    public Usuario(Long id, String nome, String email, String senha, List<Aluguel> alugueis) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.alugueis = alugueis;
-        this.roles = role;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "nome")
     private String nome;
 
-    @Column(unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
+    @Column(name = "senha")
     private String senha;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private UserRole role;
 
     @OneToMany(mappedBy = "usuario")
     private List<Aluguel> alugueis;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "TB_USUARIO_ROLE",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        if (this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -81,6 +78,7 @@ public class Usuario implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
     public Long getId() {
         return id;
@@ -122,12 +120,11 @@ public class Usuario implements UserDetails {
         this.alugueis = alugueis;
     }
 
-    public Set<Role> getRoles() {
-
-        return roles;
+    public UserRole getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

@@ -1,6 +1,7 @@
 package com.biblioteca_icpi.controller;
 
-import com.biblioteca_icpi.dto.LivroDTO;
+import com.biblioteca_icpi.dto.CadastrarLivroDTO;
+import com.biblioteca_icpi.dto.LivroResponseDTO;
 import com.biblioteca_icpi.service.LivroService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,17 @@ public class LivroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LivroDTO> buscarLivro (@PathVariable Long id) {
+    public ResponseEntity<LivroResponseDTO> buscarLivro (@PathVariable Long id) {
         return ResponseEntity.ok(livroService.buscarLivroNoBancoDeDados(id));
     }
 
     @PostMapping
-    public ResponseEntity<LivroDTO> cadastrarLivro (@Valid @RequestBody LivroDTO dto) {
+    public ResponseEntity<LivroResponseDTO> cadastrarLivro (@Valid @RequestBody CadastrarLivroDTO dto) {
         return ResponseEntity.ok(livroService.cadastrarLivro(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LivroDTO> editarLivro (@PathVariable Long id, @Valid @RequestBody LivroDTO dto) {
+    public ResponseEntity<LivroResponseDTO> editarLivro (@PathVariable Long id, @Valid @RequestBody CadastrarLivroDTO dto) {
         return ResponseEntity.ok(livroService.editarLivro(id, dto));
     }
 
@@ -40,7 +41,7 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LivroDTO>> listarLivros () {
+    public ResponseEntity<List<LivroResponseDTO>> listarLivros () {
         return ResponseEntity.ok(livroService.listarLivros());
     }
 }

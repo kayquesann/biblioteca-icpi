@@ -1,6 +1,5 @@
 package com.biblioteca_icpi.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class CadastrarUsuarioDTO {
@@ -9,11 +8,11 @@ public class CadastrarUsuarioDTO {
     private String nome;
 
     @NotBlank(message = "O e-mail é obrigatório.")
-    @Email
     private String email;
 
     @NotBlank(message = "A senha é obrigatória.")
     private String senha;
+
 
     public String getNome() {
         return nome;
@@ -38,4 +37,5 @@ public class CadastrarUsuarioDTO {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
 }

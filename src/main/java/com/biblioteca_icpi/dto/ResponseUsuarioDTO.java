@@ -1,22 +1,22 @@
 package com.biblioteca_icpi.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 
-import java.util.List;
+import com.biblioteca_icpi.model.UserRole;
 
 public class ResponseUsuarioDTO {
 
-    @NotBlank(message = "O usuário é obrigatório")
+    private Long Id;
     private String nome;
-
-    @NotBlank(message = "O email é obrigatório")
-    @Email
     private String email;
+    private UserRole role;
 
-    @NotEmpty
-    private List<String> roles;
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -34,11 +34,11 @@ public class ResponseUsuarioDTO {
         this.email = email;
     }
 
-    public List<String> getRoles() {
-        return roles;
+    public UserRole getRole() {
+        return role;
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

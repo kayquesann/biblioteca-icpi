@@ -5,14 +5,18 @@ import com.biblioteca_icpi.dto.EditarUsuarioDTO;
 import com.biblioteca_icpi.dto.ResponseUsuarioDTO;
 import com.biblioteca_icpi.exception.usuario.UsuarioJaExistenteException;
 import com.biblioteca_icpi.exception.usuario.UsuarioNaoEncontradoException;
-import com.biblioteca_icpi.model.Role;
+import com.biblioteca_icpi.model.UserRole;
 import com.biblioteca_icpi.model.Usuario;
-import com.biblioteca_icpi.repository.RoleRepository;
+import com.biblioteca_icpi.repository.AluguelRepository;
 import com.biblioteca_icpi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,30 +24,33 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final AluguelRepository aluguelRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder;
 
-    private final RoleRepository roleRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, AluguelRepository aluguelRepository, BCryptPasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.aluguelRepository = aluguelRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
     }
 
-    public ResponseUsuarioDTO buscarUsuarioNoBanco (Long id) {
+    public ResponseUsuarioDTO buscarUsuarioNoBanco (Long id) throws AccessDeniedException {
+        Usuario usuarioLogado = obterUsuarioLogado();
+        if (usuarioLogado.getRole() == UserRole.ADMIN || usuarioLogado.getId().equals(id)) {
+            Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
+            return convertToResponseUsuarioDTO(usuarioEncontrado);
+        }
+        throw new AccessDeniedException("Você não tem permissão para ver esse usuário");
 
-        Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
-        return convertToResponseUsuarioDTO(usuarioEncontrado);
+
     }
 
-    private Usuario criarUsuarioBase(CadastrarUsuarioDTO dto) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.getNome());
-        usuario.setEmail(dto.getEmail());
-        usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
-        return usuario;
+    private Usuario obterUsuarioLogado () {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Usuario) authentication.getPrincipal();
     }
+
 
     @Transactional
     public ResponseUsuarioDTO criarUsuario(CadastrarUsuarioDTO dto) {
@@ -51,41 +58,57 @@ public class UsuarioService {
         if (possivelUsuario.isPresent()) {
             throw new UsuarioJaExistenteException("Usuário já cadastrado!");
         } else {
-            Usuario usuario = criarUsuarioBase(dto);
-            Role userRole = roleRepository.findByNome("ROLE_USER");
-            usuario.getRoles().add(userRole);
+            String encryptedPassword = passwordEncoder.encode(dto.getSenha());
+            Usuario usuario = new Usuario();
+            usuario.setNome(dto.getNome());
+            usuario.setEmail(dto.getEmail());
+            usuario.setSenha(encryptedPassword);
+            usuario.setRole(UserRole.USER);
            usuarioRepository.save(usuario);
             return convertToResponseUsuarioDTO(usuario);
         }
     }
 
     @Transactional
-    public ResponseUsuarioDTO criarUsuarioAdmin (CadastrarUsuarioDTO dto) {
-        Optional<Usuario> possivelUsuario = usuarioRepository.findByEmail(dto.getEmail());
-        if (possivelUsuario.isPresent()) {
-            throw new UsuarioJaExistenteException("Usuário já cadastrado!");
-        } else {
-            Usuario usuario = criarUsuarioBase(dto);
-            Role roleAdmin = roleRepository.findByNome("ROLE_ADMIN");
-            usuario.getRoles().add(roleAdmin);
-            usuarioRepository.save(usuario);
-            return convertToResponseUsuarioDTO(usuario);
-        }
+    public ResponseUsuarioDTO promoverParaAdmin (String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
+        usuario.setRole(UserRole.ADMIN);
+        usuarioRepository.save(usuario);
+        return convertToResponseUsuarioDTO(usuario);
     }
+
 
     @Transactional
-    public ResponseUsuarioDTO editarUsuario(Long id, EditarUsuarioDTO dto) {
-        Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
-        usuarioEncontrado.setNome(dto.getNome());
-        usuarioEncontrado.setSenha(passwordEncoder.encode(dto.getSenha()));
-        usuarioRepository.save(usuarioEncontrado);
-        return convertToResponseUsuarioDTO(usuarioEncontrado);
+    public ResponseUsuarioDTO editarUsuario(Long id, EditarUsuarioDTO dto) throws AccessDeniedException {
+        Usuario usuarioLogado = obterUsuarioLogado();
+        if (usuarioLogado.getRole() == UserRole.ADMIN || usuarioLogado.getId().equals(id))  {
+            Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
+            usuarioEncontrado.setNome(dto.getNome());
+            usuarioEncontrado.setSenha(passwordEncoder.encode(dto.getSenha()));
+            usuarioRepository.save(usuarioEncontrado);
+            return convertToResponseUsuarioDTO(usuarioEncontrado);
+        }
+        throw new AccessDeniedException("Você não tem permissão para editar esse usuário");
+
     }
 
-    public void excluirUsuario(Long id) {
-        Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
+    public void excluirUsuario(Long id) throws AccessDeniedException {
+        Usuario usuarioLogado = obterUsuarioLogado();
+
+        if (usuarioLogado.getRole() != UserRole.ADMIN && !usuarioLogado.getId().equals(id)) {
+            throw new AccessDeniedException("Você não tem permissão para excluir esse usuário");
+        }
+
+        Usuario usuarioEncontrado = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
+
+        if (aluguelRepository.existsByUsuario(usuarioEncontrado)) {
+            throw new IllegalStateException("Usuário possui histórico de aluguel e não pode ser excluído");
+        }
+
         usuarioRepository.delete(usuarioEncontrado);
     }
+
 
     public List<ResponseUsuarioDTO> listarUsuarios () {
         List<Usuario> usuarios = usuarioRepository.findAll();
@@ -95,13 +118,10 @@ public class UsuarioService {
 
     public ResponseUsuarioDTO convertToResponseUsuarioDTO (Usuario usuario) {
         ResponseUsuarioDTO usuarioDTO = new ResponseUsuarioDTO();
+        usuarioDTO.setId(usuario.getId());
         usuarioDTO.setNome(usuario.getNome());
         usuarioDTO.setEmail(usuario.getEmail());
-        usuarioDTO.setRoles(
-                usuario.getRoles()
-                        .stream()
-                        .map(Role::getAuthority)
-                        .toList());
+        usuarioDTO.setRole(usuario.getRole());
         return usuarioDTO;
     }
 

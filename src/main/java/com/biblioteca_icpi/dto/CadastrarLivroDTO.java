@@ -2,7 +2,9 @@ package com.biblioteca_icpi.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class LivroDTO {
+public class CadastrarLivroDTO {
+
+    private Long id;
 
     @NotBlank(message = "O nome do livro é obrigatório.")
     private String nome;
@@ -15,6 +17,14 @@ public class LivroDTO {
 
     @NotBlank(message = "O gênero é obrigatório")
     private String genero;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -47,4 +57,5 @@ public class LivroDTO {
     public void setGenero(String genero) {
         this.genero = genero;
     }
+
 }

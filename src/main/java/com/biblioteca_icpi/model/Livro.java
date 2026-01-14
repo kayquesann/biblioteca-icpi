@@ -10,7 +10,7 @@ public class Livro {
     public Livro() {
     }
 
-    public Livro(Long id, String nome, String autor, boolean disponivel, List<Aluguel> alugueis) {
+    public Livro(Long id, String nome, String autor, DisponibilidadeLivro disponivel, List<Aluguel> alugueis) {
         this.id = id;
         this.nome = nome;
         this.autor = autor;
@@ -22,15 +22,21 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "nome")
     private String nome;
 
+    @Column(name = "autor")
     private String autor;
 
+    @Column(name = "descricao")
     private String descricao;
 
+    @Column(name = "genero")
     private String genero;
 
-    private boolean disponivel = true;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "disponivel", nullable = false)
+    private DisponibilidadeLivro disponivel;
 
     @OneToMany(mappedBy = "livro")
     private List<Aluguel> alugueis;
@@ -75,11 +81,11 @@ public class Livro {
         this.genero = genero;
     }
 
-    public boolean isDisponivel() {
+    public DisponibilidadeLivro getDisponivel() {
         return disponivel;
     }
 
-    public void setDisponivel(boolean disponivel) {
+    public void setDisponivel(DisponibilidadeLivro disponivel) {
         this.disponivel = disponivel;
     }
 

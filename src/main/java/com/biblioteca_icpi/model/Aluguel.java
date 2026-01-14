@@ -2,6 +2,7 @@ package com.biblioteca_icpi.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TB_ALUGUEL")
@@ -10,12 +11,12 @@ public class Aluguel {
     public Aluguel() {
     }
 
-    public Aluguel(Long id, Usuario usuario, Livro livro, LocalDate dataInicio, LocalDate dataDevolucao) {
+    public Aluguel(Long id, Usuario usuario, Livro livro, LocalDateTime dataInicio, LocalDate prazoDevolucao) {
         this.id = id;
         this.usuario = usuario;
         this.livro = livro;
         this.dataInicio = dataInicio;
-        this.dataDevolucao = dataDevolucao;
+        this.prazoDevolucao = prazoDevolucao;
     }
 
     @Id
@@ -30,12 +31,18 @@ public class Aluguel {
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
-    private String status = "ATIVO";
+    @Column(name = "status")
+    private StatusAluguelEnum status;
 
-    private LocalDate dataInicio;
+    @Column(name = "dataInicio")
+    private LocalDateTime dataInicio;
 
+    @Column(name = "prazoDevolucao")
+    private LocalDate prazoDevolucao;
 
-    private LocalDate dataDevolucao;
+    @Column(name = "encerradoEm")
+    private LocalDateTime encerradoEm;
+
 
     public Long getId() {
         return id;
@@ -61,27 +68,35 @@ public class Aluguel {
         this.livro = livro;
     }
 
-    public String getStatus() {
+    public StatusAluguelEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusAluguelEnum status) {
         this.status = status;
     }
 
-    public LocalDate getDataInicio() {
+    public LocalDateTime getDataInicio() {
         return dataInicio;
     }
 
-    public void setDataInicio(LocalDate dataInicio) {
+    public void setDataInicio(LocalDateTime dataInicio) {
         this.dataInicio = dataInicio;
     }
 
-    public LocalDate getDataDevolucao() {
-        return dataDevolucao;
+    public LocalDate getPrazoDevolucao() {
+        return prazoDevolucao;
     }
 
-    public void setDataDevolucao(LocalDate dataDevolucao) {
-        this.dataDevolucao = dataDevolucao;
+    public void setPrazoDevolucao(LocalDate prazoDevolucao) {
+        this.prazoDevolucao = prazoDevolucao;
+    }
+
+    public LocalDateTime getEncerradoEm() {
+        return encerradoEm;
+    }
+
+    public void setEncerradoEm(LocalDateTime encerradoEm) {
+        this.encerradoEm = encerradoEm;
     }
 }
