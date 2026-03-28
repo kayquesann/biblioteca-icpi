@@ -3,6 +3,8 @@ package com.biblioteca_icpi.controller;
 import com.biblioteca_icpi.dto.AlugarDTO;
 import com.biblioteca_icpi.dto.AluguelResponseDTO;
 import com.biblioteca_icpi.service.AluguelService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +22,10 @@ public class AluguelController {
     }
 
     @PostMapping
-    public ResponseEntity<AluguelResponseDTO> alugarLivro(@RequestBody AlugarDTO dto) {
+    public ResponseEntity<AluguelResponseDTO> alugarLivro(@RequestBody @Valid AlugarDTO dto) {
         AluguelResponseDTO response = aluguelService.alugarLivro(dto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @PutMapping("/{id}")

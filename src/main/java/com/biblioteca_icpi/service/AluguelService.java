@@ -57,16 +57,18 @@ public class AluguelService {
     @Transactional
     public AluguelResponseDTO devolverLivro (Long id) {
         Aluguel aluguel = aluguelRepository.findById(id).orElseThrow(() -> new IllegalStateException("Aluguel não encontrado"));
-        Livro livro = aluguel.getLivro();
-        livroService.marcarComoDisponivel(livro);
-        aluguel.setStatus(StatusAluguelEnum.ENCERRADO);
-        aluguel.setEncerradoEm(LocalDateTime.now());
-        aluguelRepository.save(aluguel);
-        return convertToAluguelResponseDTO(aluguel);
-
+        if (aluguel.getStatus() == StatusAluguelEnum.ATIVO) {
+            Livro livro = aluguel.getLivro();
+            livroService.marcarComoDisponivel(livro);
+            aluguel.setStatus(StatusAluguelEnum.ENCERRADO);
+            aluguel.setEncerradoEm(LocalDateTime.now());
+            aluguelRepository.save(aluguel);
+            return convertToAluguelResponseDTO(aluguel);
+        }
+        throw new IllegalStateException("Este aluguel já foi encerrado e o livro devolvido");
     }
 
-    private Usuario obterUsuarioLogado() {
+    public Usuario obterUsuarioLogado() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Usuario) authentication.getPrincipal();
     }
@@ -99,7 +101,6 @@ public class AluguelService {
                 .map(this::convertToAluguelResponseDTO)
                 .toList();
     }
-
 
 
     public AluguelResponseDTO convertToAluguelResponseDTO (Aluguel aluguel) {

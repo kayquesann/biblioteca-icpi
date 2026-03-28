@@ -46,7 +46,7 @@ public class UsuarioService {
 
     }
 
-    private Usuario obterUsuarioLogado () {
+    public Usuario obterUsuarioLogado () {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Usuario) authentication.getPrincipal();
     }

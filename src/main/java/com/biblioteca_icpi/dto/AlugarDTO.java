@@ -6,6 +6,11 @@ import jakarta.validation.constraints.NotNull;
 
 public class AlugarDTO {
 
+    public AlugarDTO(Long idLivro, String email) {
+        this.idLivro = idLivro;
+        this.email = email;
+    }
+
     @NotNull(message = "O ID do livro é obrigatório.")
     private Long idLivro;
 
